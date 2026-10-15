@@ -1,0 +1,19 @@
+# Photo PDF on Apache: copy to dist/.htaccess (needs mod_headers and mod_rewrite).
+# Serve over HTTPS, which installing to the home screen and the service worker require.
+
+AddType application/manifest+json .webmanifest
+
+<IfModule mod_headers.c>
+    <FilesMatch "^(sw\.js|workbox-.*\.js|index\.html|manifest\.webmanifest)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+    <If "%{REQUEST_URI} =~ m#/assets/#">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </If>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>

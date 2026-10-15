@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Photo PDF Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: single centered column of plan sections; screens shown as a grid of phone mockups that wraps to one column on phones */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --fg: #14171c;
+  --muted: #5b6372;
+  --line: #dde1e8;
+  --accent: #0b63ce;
+  --accent-soft: #e4eefb;
+  --code-bg: #eef1f5;
+
+  /* app mockup tokens (system-native look) */
+  --a-bg: #f2f2f7;
+  --a-surface: #ffffff;
+  --a-fg: #111216;
+  --a-muted: #6c707b;
+  --a-line: #e1e2e8;
+  --a-accent: #0b63ce;
+  --a-accent-fg: #ffffff;
+  --a-fill: #e7e8ee;
+  --a-scrim: rgba(10, 12, 18, 0.38);
+  --a-sys: #f7f7f9;
+  --frame: #1d2026;
+  --page-white: #ffffff;
+
+  --f-display: "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --f-app: -apple-system, "SF Pro Text", Roboto, "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1014; --surface: #161920; --fg: #e7e9ee; --muted: #9aa2b2; --line: #2a2f39;
+    --accent: #5ea3ff; --accent-soft: #14243b; --code-bg: #1c2029;
+    --a-bg: #000000; --a-surface: #1c1c1e; --a-fg: #f2f2f7; --a-muted: #98989f; --a-line: #2e2e31;
+    --a-accent: #3d8bff; --a-accent-fg: #ffffff; --a-fill: #2c2c2f; --a-scrim: rgba(0, 0, 0, 0.55);
+    --a-sys: #242427; --frame: #3a3e47; --page-white: #f4f4f4;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1014; --surface: #161920; --fg: #e7e9ee; --muted: #9aa2b2; --line: #2a2f39;
+  --accent: #5ea3ff; --accent-soft: #14243b; --code-bg: #1c2029;
+  --a-bg: #000000; --a-surface: #1c1c1e; --a-fg: #f2f2f7; --a-muted: #98989f; --a-line: #2e2e31;
+  --a-accent: #3d8bff; --a-accent-fg: #ffffff; --a-fill: #2c2c2f; --a-scrim: rgba(0, 0, 0, 0.55);
+  --a-sys: #242427; --frame: #3a3e47; --page-white: #f4f4f4;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 17px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 48px 96px; display: flex; flex-direction: column; gap: 72px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); line-height: 1.02; }
+h2 { font-size: 1.75rem; line-height: 1.15; }
+h3 { font-size: 1.1rem; }
+p { margin: 0; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lead { font-size: 1.2rem; color: var(--muted); max-width: 62ch; }
+code, .mono { font-family: var(--f-mono); font-size: 0.85em; }
+code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header.top { display: flex; flex-direction: column; gap: 20px; }
+.brand { display: flex; align-items: center; gap: 16px; }
+.brand svg { width: 64px; height: 64px; flex: none; border-radius: 15px; box-shadow: 0 6px 18px rgba(11, 99, 206, 0.25); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 0.88rem; padding: 5px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.chip b { font-weight: 600; color: var(--accent); }
+nav.toc { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.95rem; }
+nav.toc a { text-decoration: none; color: var(--muted); }
+nav.toc a:hover { color: var(--accent); }
+
+section { display: flex; flex-direction: column; gap: 24px; scroll-margin-top: 16px; }
+.sec-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px 24px; }
+.sec-head > div { display: flex; flex-direction: column; gap: 6px; min-width: 0; max-width: 70ch; }
+.sec-head p { color: var(--muted); }
+
+/* language toggle */
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; padding: 3px; background: var(--surface); }
+.seg button { font: inherit; font-size: 0.9rem; border: 0; background: transparent; color: var(--muted); padding: 5px 14px; border-radius: 7px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* ---------- phone mockups ---------- */
+.screens { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 40px 24px; }
+figure.shot { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 0; }
+figcaption { width: 100%; max-width: 260px; display: flex; flex-direction: column; gap: 3px; font-size: 0.93rem; color: var(--muted); }
+figcaption strong { color: var(--fg); font-family: var(--f-display); font-size: 1rem; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+figcaption .n { font-family: var(--f-mono); font-size: 0.78rem; color: var(--accent); }
+.sys-tag { font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; color: var(--muted); }
+
+.phone {
+  width: 100%; max-width: 260px; aspect-ratio: 9 / 19.5;
+  border: 8px solid var(--frame); border-radius: 38px;
+  background: var(--a-bg); color: var(--a-fg);
+  font-family: var(--f-app); font-size: 13px; line-height: 1.35;
+  position: relative; overflow: hidden; display: flex; flex-direction: column;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.35);
+}
+.phone .sb { height: 30px; flex: none; display: flex; justify-content: space-between; align-items: center; padding: 0 20px 0 22px; font-size: 12px; font-weight: 600; position: relative; z-index: 3; }
+.phone .sb .bat { width: 20px; height: 9px; border: 1.5px solid currentColor; border-radius: 3px; position: relative; }
+.phone .sb .bat::after { content: ""; position: absolute; inset: 1px 4px 1px 1px; background: currentColor; border-radius: 1px; }
+.phone .island { position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 64px; height: 18px; background: #000; border-radius: 10px; z-index: 4; }
+.phone .homebar { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); width: 84px; height: 4px; border-radius: 3px; background: var(--a-fg); opacity: 0.85; z-index: 9; }
+.scr { flex: 1; position: relative; display: flex; flex-direction: column; min-height: 0; }
+
+.a-nav { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; min-height: 36px; font-size: 13px; }
+.a-nav .t { font-weight: 600; }
+.a-link { color: var(--a-accent); }
+.large-title { font-size: 24px; font-weight: 700; padding: 6px 16px 0; letter-spacing: -0.02em; }
+.ic { width: 18px; height: 18px; color: var(--a-accent); display: block; }
+
+.btn { display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 12px; font-weight: 600; font-size: 14px; height: 42px; padding: 0 14px; }
+.btn.primary { background: var(--a-accent); color: var(--a-accent-fg); }
+.btn.secondary { background: var(--a-fill); color: var(--a-accent); }
+.btn.plain { color: var(--a-accent); height: 32px; font-weight: 500; }
+
+/* photos (image content: same in both themes) */
+.ph { border-radius: 0; background-size: cover; }
+.p1 { background: linear-gradient(165deg, #f7c77d, #e2725b 58%, #6a3c5c); }
+.p2 { background: linear-gradient(180deg, #a8d8f2, #5b97c4 52%, #3a6b44 53%, #4f8a52); }
+.p3 { background: repeating-linear-gradient(180deg, transparent 0 7px, rgba(60, 50, 30, 0.16) 7px 8px), linear-gradient(#f8f4eb, #e6dcc8); }
+.p4 { background: radial-gradient(circle at 32% 34%, #ffe38f, #f2ab35 26%, #5d8240 27%, #3b5c2a); }
+.p5 { background: linear-gradient(200deg, #cdbbe6, #7b6aa9 50%, #2c2948); }
+.p6 { background: linear-gradient(140deg, #86d6c8, #2b8d83); }
+.p7 { background: linear-gradient(120deg, #f4b0a6, #c55c7b); }
+.p8 { background: linear-gradient(170deg, #c9d3dc, #7c8a99); }
+
+/* screen 0: home screen */
+.wall { position: absolute; inset: 0; background: linear-gradient(170deg, #3d5a80, #7b8fb0 45%, #e0b9a3); }
+.home-grid { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 10px; padding: 18px 14px; }
+.app { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9.5px; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); }
+.app i { width: 44px; height: 44px; border-radius: 11px; background: rgba(255, 255, 255, 0.28); display: block; }
+.app svg { width: 44px; height: 44px; border-radius: 11px; display: block; }
+.app.ours { position: relative; }
+.app.ours::before { content: ""; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; border-radius: 15px; border: 2px solid #fff; opacity: 0.9; }
+.dock { position: absolute; z-index: 2; left: 10px; right: 10px; bottom: 16px; height: 62px; border-radius: 22px; background: rgba(255, 255, 255, 0.28); display: flex; justify-content: space-around; align-items: center; padding: 0 8px; }
+.dock i { width: 42px; height: 42px; border-radius: 11px; background: rgba(255, 255, 255, 0.4); display: block; }
+
+/* screen 1: start */
+.empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; padding: 0 22px 60px; }
+.empty .art { width: 84px; height: 84px; color: var(--a-accent); }
+.empty h4 { margin: 4px 0 0; font-size: 17px; }
+.empty p { color: var(--a-muted); font-size: 12.5px; }
+.empty .btn { align-self: stretch; margin-top: 8px; }
+.hint { position: absolute; left: 10px; right: 10px; bottom: 18px; background: var(--a-surface); border: 1px solid var(--a-line); border-radius: 14px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; font-size: 11.5px; }
+.hint b { display: block; font-size: 12px; }
+.hint .x { margin-left: auto; color: var(--a-muted); font-size: 14px; line-height: 1; }
+.hint .share-g { width: 16px; height: 16px; color: var(--a-accent); flex: none; margin-top: 1px; }
+
+/* screen 2: picker */
+.sysbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--a-sys); border-bottom: 1px solid var(--a-line); font-size: 13px; }
+.sysbar .t { font-weight: 600; }
+.pick-seg { margin: 8px 12px; display: flex; background: var(--a-fill); border-radius: 8px; padding: 2px; font-size: 11.5px; }
+.pick-seg span { flex: 1; text-align: center; padding: 3px; border-radius: 6px; }
+.pick-seg span:first-child { background: var(--a-surface); font-weight: 600; }
+.pick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+.pick-grid div { aspect-ratio: 1; position: relative; }
+.pick-grid .sel::after { content: attr(data-n); position: absolute; right: 4px; bottom: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--a-accent); color: #fff; border: 1.5px solid #fff; font-size: 9.5px; font-weight: 700; display: grid; place-items: center; }
+.pick-grid .sel { outline: 2px solid var(--a-accent); outline-offset: -2px; }
+
+/* screen 3: arrange */
+.hint-line { text-align: center; color: var(--a-muted); font-size: 11px; padding: 0 12px 6px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; padding: 4px 10px; }
+.tile { aspect-ratio: 3 / 4; border-radius: 8px; position: relative; overflow: visible; }
+.tile .img { position: absolute; inset: 0; border-radius: 8px; }
+.tile .num { position: absolute; top: 4px; left: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 9.5px; font-weight: 700; display: grid; place-items: center; }
+.tile .acts { position: absolute; right: 4px; bottom: 4px; display: flex; gap: 4px; }
+.tile .acts span { width: 20px; height: 20px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); color: #222; display: grid; place-items: center; }
+.tile .acts svg { width: 11px; height: 11px; }
+.tile.lift { transform: scale(1.08) rotate(-3deg); z-index: 2; box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35); border-radius: 8px; }
+.tile.ghost { border: 1.5px dashed var(--a-muted); opacity: 0.6; }
+.tile.add { border: 1.5px dashed var(--a-line); background: var(--a-surface); color: var(--a-accent); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; font-weight: 600; }
+.tile.add svg { width: 20px; height: 20px; }
+.bottombar { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 12px 20px; background: var(--a-surface); border-top: 1px solid var(--a-line); display: flex; align-items: center; gap: 8px; }
+.pchip { font-size: 10.5px; color: var(--a-muted); background: var(--a-fill); border-radius: 8px; padding: 0 8px; height: 42px; display: flex; align-items: center; white-space: nowrap; }
+.bottombar .btn { flex: 1; }
+
+/* overlays */
+.scrim { position: absolute; inset: 0; background: var(--a-scrim); z-index: 5; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--a-surface); border-radius: 16px 16px 0 0; padding: 6px 14px 26px; display: flex; flex-direction: column; gap: 10px; }
+.grabber { width: 34px; height: 4px; border-radius: 2px; background: var(--a-line); margin: 0 auto 2px; }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; }
+.sheet-head .t { font-weight: 700; font-size: 15px; }
+.lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--a-muted); }
+.aseg { display: flex; background: var(--a-fill); border-radius: 9px; padding: 2px; font-size: 12px; }
+.aseg span { flex: 1; text-align: center; padding: 6px 4px; border-radius: 7px; }
+.aseg span.on { background: var(--a-bg); font-weight: 600; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); }
+.pages { display: flex; justify-content: center; align-items: flex-end; gap: 14px; padding: 6px 0 2px; }
+.pg { background: var(--page-white); border: 1px solid var(--a-line); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); display: flex; align-items: center; justify-content: center; }
+.pg.portrait { width: 56px; height: 79px; }
+.pg.land { width: 79px; height: 56px; }
+.pg .pi { width: 100%; }
+.pg.portrait .pi { aspect-ratio: 3 / 4; }
+.pg.land .pi { height: 100%; width: auto; aspect-ratio: 16 / 9; max-width: 100%; }
+.small { font-size: 11px; color: var(--a-muted); }
+.row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--a-line); padding-top: 9px; font-size: 12px; gap: 8px; }
+.row .v { color: var(--a-muted); text-align: right; }
+
+.dialog { position: absolute; z-index: 6; left: 26px; right: 26px; top: 34%; background: var(--a-surface); border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.ring { width: 54px; height: 54px; }
+.dialog .t { font-weight: 700; font-size: 14px; }
+.bar { width: 100%; height: 5px; border-radius: 3px; background: var(--a-fill); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 66%; background: var(--a-accent); border-radius: 3px; }
+
+/* screen 6: ready */
+.ready { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 16px 0; gap: 10px; }
+.stack { position: relative; width: 92px; height: 128px; margin-top: 8px; }
+.stack .pg { position: absolute; width: 88px; height: 124px; }
+.stack .pg:nth-child(1) { transform: rotate(7deg) translate(8px, 2px); }
+.stack .pg:nth-child(2) { transform: rotate(-4deg); }
+.stack .pg:nth-child(3) { left: 2px; top: 2px; }
+.ready h4 { margin: 4px 0 0; font-size: 17px; }
+.field { align-self: stretch; display: flex; align-items: center; background: var(--a-surface); border: 1px solid var(--a-line); border-radius: 10px; height: 36px; padding: 0 10px; font-size: 12px; gap: 2px; }
+.field .ext { color: var(--a-muted); }
+.field .pen { margin-left: auto; width: 13px; height: 13px; color: var(--a-muted); }
+.ready .btns { align-self: stretch; display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-bottom: 24px; }
+
+/* screen 7: share sheet */
+.osheet { position: absolute; z-index: 6; left: 0; right: 0; bottom: 0; background: var(--a-sys); border-radius: 14px 14px 0 0; padding: 8px 12px 24px; display: flex; flex-direction: column; gap: 10px; }
+.ofile { display: flex; gap: 10px; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--a-line); }
+.ofile .doc { width: 30px; height: 38px; border-radius: 3px; background: var(--page-white); border: 1px solid var(--a-line); display: grid; place-items: center; font-size: 7.5px; font-weight: 800; color: #d23b2f; }
+.ofile b { display: block; font-size: 12px; }
+.ofile span { font-size: 10.5px; color: var(--a-muted); }
+.otargets { display: flex; justify-content: space-between; padding: 2px 4px; }
+.otargets div { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9.5px; }
+.otargets i { width: 40px; height: 40px; border-radius: 50%; background: var(--a-fill); display: block; }
+.oacts { background: var(--a-surface); border-radius: 10px; font-size: 12px; }
+.oacts div { padding: 9px 12px; border-bottom: 1px solid var(--a-line); }
+.oacts div:last-child { border-bottom: 0; }
+
+/* ---------- flow ---------- */
+.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; overflow-x: auto; }
+.diagram pre.mermaid { margin: 0; display: flex; justify-content: center; }
+
+/* ---------- architecture ---------- */
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+.cols > * { min-width: 0; }
+.mods { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.mods li { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
+.mods li code { background: none; padding: 0; color: var(--accent); word-break: break-word; }
+.mods li span { color: var(--muted); }
+.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; font-size: 0.95rem; }
+.steps li::before { content: counter(s); width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-family: var(--f-mono); font-size: 0.8rem; display: grid; place-items: center; }
+.steps b { display: block; font-family: var(--f-display); font-weight: 600; }
+.steps span { color: var(--muted); }
+pre.code { background: var(--code-bg); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-family: var(--f-mono); font-size: 0.8rem; line-height: 1.6; margin: 0; }
+
+/* ---------- table ---------- */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 680px; font-size: 0.93rem; }
+th, td { text-align: left; vertical-align: top; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--f-display); font-weight: 600; font-size: 0.85rem; color: var(--muted); }
+td:first-child { font-weight: 600; white-space: nowrap; }
+.callout { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; font-size: 0.95rem; max-width: 80ch; }
+
+/* ---------- plan ---------- */
+.phases { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.phase { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.phase .ph-n { font-family: var(--f-mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 0.05em; }
+.phase ul { margin: 0; padding-left: 1.1em; font-size: 0.93rem; display: flex; flex-direction: column; gap: 4px; }
+.phase .done { font-size: 0.88rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 9px; margin-top: auto; }
+.phase .done b { color: var(--fg); font-weight: 600; }
+
+.defaults { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0 32px; }
+.defaults li { padding: 11px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; font-size: 0.95rem; }
+.defaults li b { font-family: var(--f-display); font-weight: 600; }
+.defaults li span { color: var(--muted); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .tile.lift { transition: transform 0.2s; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0b63ce"/><rect x="19" y="11" width="29" height="38" rx="3" fill="#fff" opacity=".5" transform="rotate(9 33 30)"/><rect x="15" y="14" width="29" height="38" rx="3" fill="#fff"/><path d="M19 44l7-9 5 6 4-4 6 7z" fill="#0b63ce"/><circle cx="35" cy="23" r="3.2" fill="#0b63ce"/></svg>
+    <div>
+      <div class="eyebrow">Design &amp; build plan · v1</div>
+      <h1>Photo PDF</h1>
+    </div>
+  </div>
+  <p class="lead">A small installable web app. You pick photos from the gallery on an iPhone or Android phone, put them in order, and share them as one PDF through the system share sheet. All processing happens on the device and nothing is uploaded.</p>
+  <div class="chips" aria-label="Decisions">
+    <span class="chip"><b>Stack</b> React + Vite + TypeScript</span>
+    <span class="chip"><b>Pages</b> A4 by default, or fit to image</span>
+    <span class="chip"><b>Scaling</b> fill the page, no distortion</span>
+    <span class="chip"><b>Edit</b> reorder · rotate · remove · add</span>
+    <span class="chip"><b>Quality</b> always compressed</span>
+    <span class="chip"><b>Language</b> Czech + English, from device</span>
+    <span class="chip"><b>Look</b> native minimal, light + dark</span>
+    <span class="chip"><b>Hosting</b> static build on your server</span>
+  </div>
+  <nav class="toc" aria-label="Sections">
+    <a href="#screens">Screens</a><a href="#flow">Flow</a><a href="#architecture">Architecture</a><a href="#platforms">iPhone vs Android</a><a href="#plan">Build plan</a><a href="#deploy">Deploy</a><a href="#defaults">Defaults to confirm</a>
+  </nav>
+</header>
+
+<!-- ================= SCREENS ================= -->
+<section id="screens">
+  <div class="sec-head">
+    <div>
+      <div class="eyebrow">01 · Screens</div>
+      <h2>Every screen, in the order you meet it</h2>
+      <p>The mockups follow your light or dark theme, as the app will. Screens 2 and 7 belong to the operating system, so the app only opens them.</p>
+    </div>
+    <div class="seg" role="group" aria-label="Mockup language">
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="true">English</button>
+      <button type="button" id="lang-cs" data-lang="cs" aria-pressed="false">Čeština</button>
+    </div>
+  </div>
+
+  <div class="screens">
+
+    <!-- 0 home screen -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="wall"></div>
+        <div class="island"></div>
+        <div class="sb" style="color:#fff"><span>9:41</span><span class="bat"></span></div>
+        <div class="scr">
+          <div class="home-grid">
+            <div class="app"><i></i><span data-cs="Kalendář">Calendar</span></div>
+            <div class="app"><i></i><span data-cs="Fotky">Photos</span></div>
+            <div class="app"><i></i><span data-cs="Fotoaparát">Camera</span></div>
+            <div class="app"><i></i><span data-cs="Soubory">Files</span></div>
+            <div class="app"><i></i><span data-cs="Počasí">Weather</span></div>
+            <div class="app"><i></i><span data-cs="Poznámky">Notes</span></div>
+            <div class="app ours">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0b63ce"/><rect x="19" y="11" width="29" height="38" rx="3" fill="#fff" opacity=".5" transform="rotate(9 33 30)"/><rect x="15" y="14" width="29" height="38" rx="3" fill="#fff"/><path d="M19 44l7-9 5 6 4-4 6 7z" fill="#0b63ce"/><circle cx="35" cy="23" r="3.2" fill="#0b63ce"/></svg>
+              <span>Photo PDF</span>
+            </div>
+            <div class="app"><i></i><span data-cs="Hodiny">Clock</span></div>
+          </div>
+          <div class="dock"><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="homebar" style="background:#fff"></div>
+      </div>
+      <figcaption><strong><span class="n">00</span> Home screen icon</strong>Once installed, the app opens full screen without browser bars, like a native app. It works offline.</figcaption>
+    </figure>
+
+    <!-- 1 start -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="sb"><span>9:41</span><span class="bat"></span></div>
+        <div class="scr">
+          <div class="large-title">Photo PDF</div>
+          <div class="empty">
+            <svg class="art" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><rect x="20" y="8" width="32" height="42" rx="4" transform="rotate(8 36 29)" opacity=".4"/><rect x="12" y="13" width="32" height="42" rx="4"/><path d="M16 46l8-10 6 7 4-4 7 7"/><circle cx="33" cy="24" r="3.5"/></svg>
+            <h4 data-cs="Udělejte z fotek PDF">Turn photos into a PDF</h4>
+            <p data-cs="Vyberte obrázky z galerie. Vše zůstává ve vašem telefonu.">Pick images from your gallery. Everything stays on your phone.</p>
+            <div class="btn primary" data-cs="Vybrat obrázky">Choose images</div>
+          </div>
+          <div class="hint">
+            <svg class="share-g" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg>
+            <div><b data-cs="Nainstalujte si aplikaci">Install the app</b><span data-cs="Klepněte na Sdílet a pak na Přidat na plochu.">Tap Share, then Add to Home Screen.</span></div>
+            <span class="x" aria-hidden="true">×</span>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><strong><span class="n">01</span> Start</strong>One button. The install hint shows only in iPhone Safari before the app is installed. Android gets an Install button from the browser prompt.</figcaption>
+    </figure>
+
+    <!-- 2 OS picker -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="sb"><span>9:41</span><span class="bat"></span></div>
+        <div class="scr">
+          <div class="sysbar"><span class="a-link" data-cs="Zrušit">Cancel</span><span class="t" data-cs="Vybráno: 3">3 selected</span><span class="a-link" style="font-weight:600" data-cs="Přidat">Add</span></div>
+          <div class="pick-seg"><span data-cs="Fotky">Photos</span><span data-cs="Alba">Albums</span></div>
+          <div class="pick-grid">
+            <div class="p1 sel" data-n="1"></div><div class="p8"></div><div class="p2 sel" data-n="2"></div><div class="p6"></div>
+            <div class="p7"></div><div class="p3 sel" data-n="3"></div><div class="p5"></div><div class="p4"></div>
+            <div class="p6"></div><div class="p2"></div><div class="p8"></div><div class="p1"></div>
+            <div class="p4"></div><div class="p5"></div><div class="p7"></div><div class="p3"></div>
+            <div class="p2"></div><div class="p6"></div><div class="p1"></div><div class="p8"></div>
+            <div class="p5"></div><div class="p7"></div><div class="p4"></div><div class="p2"></div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><strong><span class="n">02</span> Gallery picker <span class="sys-tag">System UI</span></strong>A standard multi-select file input opens the iOS photo library or the Android photo picker. iOS converts HEIC photos to JPEG on the way in.</figcaption>
+    </figure>
+
+    <!-- 3 arrange -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="sb"><span>9:41</span><span class="bat"></span></div>
+        <div class="scr">
+          <div class="a-nav">
+            <span class="a-link" data-cs="Vymazat">Clear</span>
+            <span class="t" data-cs="6 obrázků">6 images</span>
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-label="Settings"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+          </div>
+          <div class="hint-line" data-cs="Podržte a přetáhněte pro změnu pořadí">Hold and drag to change the order</div>
+          <div class="grid3">
+            <div class="tile"><div class="img p1"></div><span class="num">1</span><span class="acts"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></span></div>
+            <div class="tile ghost"></div>
+            <div class="tile"><div class="img p3"></div><span class="num">3</span><span class="acts"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></span></div>
+            <div class="tile"><div class="img p4"></div><span class="num">4</span><span class="acts"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></span></div>
+            <div class="tile lift"><div class="img p2"></div><span class="num">2</span></div>
+            <div class="tile"><div class="img p6"></div><span class="num">6</span><span class="acts"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></span></div>
+            <div class="tile add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-cs="Přidat">Add</span></div>
+          </div>
+          <div class="bottombar">
+            <span class="pchip" data-cs="A4 · auto">A4 · auto</span>
+            <div class="btn primary" data-cs="Vytvořit PDF">Create PDF</div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><strong><span class="n">03</span> Arrange</strong>Numbers show the page order. Long-press and drag to reorder (tile 2 is being dragged here). Each tile can be rotated 90° or removed. Add opens the picker again and appends.</figcaption>
+    </figure>
+
+    <!-- 4 settings -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="sb"><span>9:41</span><span class="bat"></span></div>
+        <div class="scr">
+          <div class="grid3" style="padding-top:44px">
+            <div class="tile"><div class="img p1"></div></div><div class="tile"><div class="img p2"></div></div><div class="tile"><div class="img p3"></div></div>
+          </div>
+          <div class="scrim"></div>
+          <div class="sheet">
+            <div class="grabber"></div>
+            <div class="sheet-head"><span class="t" data-cs="Nastavení PDF">PDF settings</span><span class="a-link" style="font-weight:600" data-cs="Hotovo">Done</span></div>
+            <span class="lbl" data-cs="Velikost stránky">Page size</span>
+            <div class="aseg"><span class="on">A4</span><span data-cs="Podle obrázku">Fit to image</span></div>
+            <div class="pages">
+              <div class="pg portrait"><div class="pi p1"></div></div>
+              <div class="pg land"><div class="pi p2"></div></div>
+            </div>
+            <p class="small" data-cs="Obrázek se zvětší co nejvíc bez deformace. Orientace stránky se řídí obrázkem.">Each image is scaled as large as it fits, without distortion. Page orientation follows the image.</p>
+            <div class="row"><span data-cs="Kvalita">Quality</span><span class="v" data-cs="Komprimováno automaticky">Compressed automatically</span></div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><strong><span class="n">04</span> Settings sheet</strong>Opened from the gear icon. A4 is the default. Fit to image makes each page match its photo's proportions. The choice is remembered.</figcaption>
+    </figure>
+
+    <!-- 5 creating -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="sb"><span>9:41</span><span class="bat"></span></div>
+        <div class="scr">
+          <div class="grid3" style="padding-top:44px">
+            <div class="tile"><div class="img p1"></div></div><div class="tile"><div class="img p2"></div></div><div class="tile"><div class="img p3"></div></div>
+            <div class="tile"><div class="img p4"></div></div><div class="tile"><div class="img p5"></div></div><div class="tile"><div class="img p6"></div></div>
+          </div>
+          <div class="scrim"></div>
+          <div class="dialog">
+            <svg class="ring" viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="22" fill="none" stroke="var(--a-fill)" stroke-width="5"/><circle cx="27" cy="27" r="22" fill="none" stroke="var(--a-accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="92 138.2" transform="rotate(-90 27 27)"/><text x="27" y="31" text-anchor="middle" font-size="12" font-weight="700" fill="var(--a-fg)">4/6</text></svg>
+            <span class="t" data-cs="Vytvářím PDF…">Creating PDF…</span>
+            <span class="small" data-cs="Obrázek 4 z 6">Image 4 of 6</span>
+            <div class="bar"><i></i></div>
+            <span class="small" data-cs="Komprimace probíhá ve vašem zařízení">Compressing on your device</span>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><strong><span class="n">05</span> Creating</strong>Images are processed one at a time to stay within iPhone memory limits. It usually takes a few seconds for 10–20 photos.</figcaption>
+    </figure>
+
+    <!-- 6 ready -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="sb"><span>9:41</span><span class="bat"></span></div>
+        <div class="scr">
+          <div class="a-nav"><span class="a-link" data-cs="‹ Upravit">‹ Edit</span><span></span><span></span></div>
+          <div class="ready">
+            <div class="stack">
+              <div class="pg"></div>
+              <div class="pg"></div>
+              <div class="pg"><div class="pi p1" style="aspect-ratio:3/4;width:100%"></div></div>
+            </div>
+            <h4 data-cs="PDF je hotové">PDF is ready</h4>
+            <span class="small" data-cs="6 stran · 2,4 MB">6 pages · 2.4 MB</span>
+            <div class="field"><span data-cs="fotky-2026-10-15-1430">photos-2026-10-15-1430</span><span class="ext">.pdf</span><svg class="pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></div>
+            <div class="btns">
+              <div class="btn primary"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg><span data-cs="Sdílet">Share</span></div>
+              <div class="btn secondary" data-cs="Uložit do zařízení">Save to device</div>
+              <div class="btn plain" data-cs="Začít znovu">Start over</div>
+            </div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><strong><span class="n">06</span> Ready</strong>The file name is editable. Share is a separate tap because both iOS and Android only open the share sheet straight from a tap.</figcaption>
+    </figure>
+
+    <!-- 7 OS share -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="island"></div>
+        <div class="sb"><span>9:41</span><span class="bat"></span></div>
+        <div class="scr">
+          <div class="ready" style="opacity:.9">
+            <div class="stack"><div class="pg"></div><div class="pg"></div><div class="pg"><div class="pi p1" style="aspect-ratio:3/4;width:100%"></div></div></div>
+          </div>
+          <div class="scrim"></div>
+          <div class="osheet">
+            <div class="ofile"><span class="doc">PDF</span><div><b data-cs="fotky-2026-10-15-1430.pdf">photos-2026-10-15-1430.pdf</b><span data-cs="Dokument PDF · 2,4 MB">PDF document · 2.4 MB</span></div></div>
+            <div class="otargets">
+              <div><i></i><span data-cs="Zprávy">Messages</span></div>
+              <div><i></i><span data-cs="Pošta">Mail</span></div>
+              <div><i></i><span data-cs="Disk">Drive</span></div>
+              <div><i></i><span data-cs="Další">More</span></div>
+            </div>
+            <div class="oacts">
+              <div data-cs="Kopírovat">Copy</div>
+              <div data-cs="Uložit do Souborů">Save to Files</div>
+              <div data-cs="Tisk">Print</div>
+            </div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><strong><span class="n">07</span> Share sheet <span class="sys-tag">System UI</span></strong>The phone's own share sheet, with every app that accepts PDFs. Browsers that can't share files, such as desktop Firefox, download the PDF instead.</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<!-- ================= FLOW ================= -->
+<section id="flow">
+  <div class="sec-head">
+    <div>
+      <div class="eyebrow">02 · App flow</div>
+      <h2>How you move between screens</h2>
+      <p>The app has four of its own states: start, arrange, creating and ready. The settings sheet and the two system screens open on top of them.</p>
+    </div>
+  </div>
+  <div class="diagram">
+<pre class="mermaid">
+flowchart TD
+  H["Tap icon on home screen"] --> S["Start"]
+  S -->|"Choose images"| P["OS gallery picker"]
+  P -->|"Cancel"| S
+  P -->|"Images picked"| T["Read files and make thumbnails"]
+  T -->|"Some files unreadable"| W["Notice: N images skipped"]
+  W --> A
+  T --> A["Arrange"]
+  A -->|"Drag, rotate, remove"| A
+  A -->|"Add"| P
+  A -->|"Clear, or last image removed"| S
+  A -->|"Gear"| G["Settings sheet: A4 or Fit to image"]
+  G -->|"Done"| A
+  A -->|"Create PDF"| C["Creating: compress and place each image"]
+  C -->|"Failure"| E["Error message"]
+  E --> A
+  C --> R["Ready"]
+  R -->|"Share"| Q{"Can this browser share files?"}
+  Q -->|"Yes"| O["OS share sheet"]
+  Q -->|"No"| D["Download the PDF"]
+  R -->|"Save to device"| D
+  R -->|"Edit"| A
+  R -->|"Start over"| S
+</pre>
+  </div>
+</section>
+
+<!-- ================= ARCHITECTURE ================= -->
+<section id="architecture">
+  <div class="sec-head">
+    <div>
+      <div class="eyebrow">03 · Architecture</div>
+      <h2>No backend: a static app that does all its work in the browser</h2>
+      <p>The build output is a folder of static files. A service worker caches them, so the app opens and works offline after the first visit.</p>
+    </div>
+  </div>
+  <div class="cols">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h3>Source layout</h3>
+      <ul class="mods">
+        <li><code>src/main.tsx</code><span>Mounts React and registers the service worker, with auto-update.</span></li>
+        <li><code>src/App.tsx</code><span>Screen state machine: start → arrange → creating → ready.</span></li>
+        <li><code>state/images.ts</code><span>Reducer with add, remove, rotate, move and clear. Frees thumbnail URLs.</span></li>
+        <li><code>lib/readImages.ts</code><span>Decodes picked files into 360 px thumbnails and skips files it can't read.</span></li>
+        <li><code>lib/renderPage.ts</code><span>Canvas step: applies rotation, downscales, outputs JPEG on white.</span></li>
+        <li><code>lib/buildPdf.ts</code><span>pdf-lib, loaded on demand. Page size, orientation and placement.</span></li>
+        <li><code>lib/share.ts</code><span>Web Share with a <code>File</code>, or a download fallback.</span></li>
+        <li><code>lib/settings.ts</code><span>Page mode stored in localStorage.</span></li>
+        <li><code>i18n/</code><span><code>cs.ts</code> and <code>en.ts</code>, with Czech plurals via <code>Intl.PluralRules</code>.</span></li>
+        <li><code>components/</code><span>StartScreen, ArrangeScreen, SortableTile, SettingsSheet, ProgressDialog, ReadyScreen, InstallHint, Toast.</span></li>
+      </ul>
+      <h3 style="margin-top:10px">Data model</h3>
+<pre class="code">type Item = {
+  id: string
+  file: File               // original, kept until PDF is built
+  thumbUrl: string         // object URL of 360 px preview
+  width: number; height: number
+  rotation: 0 | 90 | 180 | 270
+}
+type Settings = { pageMode: 'a4' | 'fit' }  // default 'a4'</pre>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h3>PDF pipeline, run once per image in order</h3>
+      <ol class="steps">
+        <li><div><b>Decode</b><span>Load the file into an <code>&lt;img&gt;</code> from an object URL. The browser applies the EXIF orientation, so photos aren't sideways.</span></div></li>
+        <li><div><b>Rotate and downscale</b><span>Draw onto a canvas, applying the user's rotation, with the long edge at most 2000 px. Fill with white first so transparent PNGs come out right.</span></div></li>
+        <li><div><b>Compress</b><span><code>canvas.toBlob('image/jpeg', 0.8)</code> gives roughly 250–600 KB per page.</span></div></li>
+        <li><div><b>Embed</b><span><code>pdfDoc.embedJpg(bytes)</code>. The JPEG goes into the PDF as is, with no second re-encode.</span></div></li>
+        <li><div><b>Place</b><span><b style="display:inline;font-family:inherit">A4:</b> 595.28 × 841.89 pt, turned landscape when the image is wider than tall. Scale = min(page ÷ image) on both axes, centered. <b style="display:inline;font-family:inherit">Fit to image:</b> page takes the image's ratio, long edge 841.89 pt.</span></div></li>
+        <li><div><b>Free memory</b><span>Set the canvas width to 0 and drop references before the next image. This matters on iPhone.</span></div></li>
+      </ol>
+      <p style="color:var(--muted);font-size:0.95rem">The result is <code>new File([bytes], name, {type: 'application/pdf'})</code>, which goes to <code>navigator.share({ files: [file] })</code> when <code>navigator.canShare</code> accepts it.</p>
+      <h3 style="margin-top:10px">Dependencies</h3>
+      <ul class="mods">
+        <li><code>react, react-dom</code><span>UI</span></li>
+        <li><code>pdf-lib</code><span>Builds the PDF. Loaded only when you tap Create PDF.</span></li>
+        <li><code>@dnd-kit/core, /sortable</code><span>Touch drag-and-drop that works in iOS Safari.</span></li>
+        <li><code>vite-plugin-pwa</code><span>Manifest, service worker (Workbox) and precache.</span></li>
+        <li><code>@vite-pwa/assets-generator</code><span>Generates all icon sizes from one SVG.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PLATFORMS ================= -->
+<section id="platforms">
+  <div class="sec-head">
+    <div>
+      <div class="eyebrow">04 · Platform behavior</div>
+      <h2>iPhone vs Android</h2>
+      <p>One codebase. These are the places where the platforms differ and how the app handles each.</p>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th></th><th>iPhone (Safari or installed)</th><th>Android (Chrome or installed)</th><th>Desktop</th></tr></thead>
+      <tbody>
+        <tr><td>Install</td><td>Manual: Share → Add to Home Screen. The app shows a one-time hint. Needs <code>apple-touch-icon</code> 180 px and the iOS meta tags.</td><td>The browser's install prompt. The app shows its own Install button via <code>beforeinstallprompt</code>.</td><td>Install icon in Chrome / Edge</td></tr>
+        <tr><td>Pick images</td><td><code>&lt;input type="file" accept="image/*" multiple&gt;</code> opens the photo library</td><td>Same input opens the Android photo picker</td><td>File dialog</td></tr>
+        <tr><td>HEIC photos</td><td>iOS converts them to JPEG when picked</td><td>Rare. If Chrome can't decode one, it's skipped with a notice.</td><td>Same as Android</td></tr>
+        <tr><td>Share the PDF</td><td>Web Share with files, iOS 15+, also in the installed app</td><td>Web Share with files</td><td>Chrome, Edge and Safari share. Firefox downloads.</td></tr>
+        <tr><td>Memory</td><td>Tight canvas limits. Sequential processing and small thumbnails avoid crashes.</td><td>Roomier, same code path</td><td>No concern</td></tr>
+        <tr><td>Offline</td><td colspan="3">Works after the first load. The service worker precaches the app shell and pdf-lib.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="callout">The share sheet only opens straight from a tap. Building a PDF takes a few seconds, and by the time it finishes the browser no longer treats the work as part of the original tap. That's why creating and sharing are two separate taps: <b>Create PDF</b>, then <b>Share</b>.</p>
+</section>
+
+<!-- ================= PLAN ================= -->
+<section id="plan">
+  <div class="sec-head">
+    <div>
+      <div class="eyebrow">05 · Build plan</div>
+      <h2>Seven phases, each ending in something testable on a phone</h2>
+    </div>
+  </div>
+  <ol class="phases">
+    <li class="phase"><span class="ph-n">PHASE 1</span><h3>Scaffold and installability</h3><ul><li>Vite + React + TypeScript project</li><li>vite-plugin-pwa: manifest, <code>display: standalone</code>, service worker</li><li>App icon SVG → 192, 512, maskable and 180 px apple-touch icons</li><li>iOS meta tags, safe-area insets, light/dark tokens</li></ul><p class="done"><b>Done when:</b> it installs on both phones and opens offline.</p></li>
+    <li class="phase"><span class="ph-n">PHASE 2</span><h3>Pick and show</h3><ul><li>Start screen and file input</li><li>Thumbnail generation, skipping unreadable files</li><li>Arrange grid with page numbers, Add, Remove and Clear</li></ul><p class="done"><b>Done when:</b> 30 photos from an iPhone show up in the order picked.</p></li>
+    <li class="phase"><span class="ph-n">PHASE 3</span><h3>Edit</h3><ul><li>dnd-kit sortable grid, long-press (200 ms) touch sensor</li><li>Rotate in 90° steps, shown live on the tile</li><li>Scrolling still works while dragging is possible</li></ul><p class="done"><b>Done when:</b> reordering works with one thumb on both phones.</p></li>
+    <li class="phase"><span class="ph-n">PHASE 4</span><h3>PDF generation</h3><ul><li>renderPage: rotation, 2000 px downscale, JPEG 0.8</li><li>buildPdf: A4 with automatic orientation, or Fit to image</li><li>Progress dialog and settings sheet</li></ul><p class="done"><b>Done when:</b> a 20-photo PDF is under ~10 MB and pages look right.</p></li>
+    <li class="phase"><span class="ph-n">PHASE 5</span><h3>Share and save</h3><ul><li>Ready screen with an editable file name</li><li>Web Share with the file, download fallback</li><li>Error messages for failures and cancelled shares</li></ul><p class="done"><b>Done when:</b> the PDF reaches Mail and Messages on both phones.</p></li>
+    <li class="phase"><span class="ph-n">PHASE 6</span><h3>Language and install prompts</h3><ul><li>Czech and English dictionaries, picked from <code>navigator.language</code></li><li>iOS install hint, Android Install button</li><li>"New version available" notice from the service worker</li></ul><p class="done"><b>Done when:</b> a Czech phone shows Czech everywhere, plurals included.</p></li>
+    <li class="phase"><span class="ph-n">PHASE 7</span><h3>Test and ship</h3><ul><li>Real devices: Safari, installed iOS app, Chrome, installed Android app</li><li>Memory test with 50 photos on an older iPhone</li><li><code>npm run build</code> → <code>dist/</code>, README, server config example</li></ul><p class="done"><b>Done when:</b> it runs from your server over HTTPS.</p></li>
+  </ol>
+</section>
+
+<!-- ================= DEPLOY ================= -->
+<section id="deploy">
+  <div class="sec-head">
+    <div>
+      <div class="eyebrow">06 · Deploy</div>
+      <h2>Your server: static files over HTTPS</h2>
+      <p>Home-screen install and the service worker need HTTPS. Copy <code>dist/</code> to the web root and set these headers so updates reach users.</p>
+    </div>
+  </div>
+<pre class="code"># nginx example (deploy/nginx.conf.example)
+location = /sw.js                { add_header Cache-Control "no-cache"; }
+location = /manifest.webmanifest { add_header Cache-Control "no-cache";
+                                   types { application/manifest+json webmanifest; } }
+location /assets/                { add_header Cache-Control "public, max-age=31536000, immutable"; }
+location /                       { try_files $uri /index.html; }</pre>
+  <p style="color:var(--muted);max-width:75ch">To test on a phone during development, run <code>npm run dev -- --host</code> with HTTPS enabled, or deploy a preview build to your server. iOS only allows service workers on a trusted certificate.</p>
+</section>
+
+<!-- ================= DEFAULTS ================= -->
+<section id="defaults">
+  <div class="sec-head">
+    <div>
+      <div class="eyebrow">07 · Defaults to confirm</div>
+      <h2>Details I filled in myself</h2>
+      <p>I'll use these unless you change them.</p>
+    </div>
+  </div>
+  <ul class="defaults">
+    <li><b>App name: "Photo PDF"</b><span>Used for the home screen label in both languages. The icon is the blue page stack shown above.</span></li>
+    <li><b>File name: photos-YYYY-MM-DD-HHmm.pdf</b><span>Czech devices get <code>fotky-…</code>. Editable before sharing.</span></li>
+    <li><b>No page margins</b><span>White bands appear only where the image's proportions differ from A4.</span></li>
+    <li><b>Compression: 2000 px long edge, JPEG quality 0.8</b><span>Sharp on screen and in print, about 0.3–0.6 MB per page.</span></li>
+    <li><b>Images are not kept between sessions</b><span>Closing the app clears the selection. Nothing is stored except the page-size setting.</span></li>
+    <li><b>Served from the domain root</b><span>A sub-path like <code>/pdf/</code> is one config value if you need it.</span></li>
+    <li><b>TypeScript</b><span>Plain React + Vite with TS types. Switching to JS is easy if you prefer it.</span></li>
+    <li><b>Not included: Android share target</b><span>Sharing photos <em>into</em> the app from the gallery is Android-only. It could be added later.</span></li>
+  </ul>
+</section>
+
+</div>
+
+<script>
+(function () {
+  var btns = document.querySelectorAll('[data-lang]');
+  function setLang(l) {
+    document.querySelectorAll('[data-cs]').forEach(function (el) {
+      if (el.dataset.en === undefined) el.dataset.en = el.textContent;
+      el.textContent = l === 'cs' ? el.dataset.cs : el.dataset.en;
+    });
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === l)); });
+    try { localStorage.setItem('mock-lang', l); } catch (e) {}
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.lang); }); });
+  var saved = null;
+  try { saved = localStorage.getItem('mock-lang'); } catch (e) {}
+  if (saved === 'cs') setLang('cs');
+})();
+</script>
+
+<!-- Renders the flow diagram when this file is opened outside the artifact viewer. -->
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  mermaid.initialize({ startOnLoad: true, theme: dark ? "dark" : "default" });
+</script>
+</body>
+</html>
